@@ -21,9 +21,11 @@ namespace IAR_AutoPath
     {
         //配置
         public static bool isShowLog = true;
-        public bool isAutoInclude = true;
-        public bool isAutoPath = false;
+        string incFileExtension = ".h";
+        string treeFileExtension = ".c,.s";
 
+        public bool isAutoInclude = true;
+        public bool isAutoPath = true;
         //局部
         bool isGetEwp = false;
         bool isGetSourcePath = false;
@@ -32,6 +34,7 @@ namespace IAR_AutoPath
         string sourcePath = "";
         string ewpName = "";
 
+        
         //公共
         public string configName = "";
         public string EwpName
@@ -350,7 +353,7 @@ namespace IAR_AutoPath
             {
                 if (item.type == FileItems.ItemType.dir)//dir
                 {
-                    if (!item.name.Contains(".ignore") && GetDirTree.CheckCodeFileIsExistInPath(item.children, ".h"))
+                    if (!item.name.Contains(".ignore") && GetDirTree.CheckCodeFileIsExistInPath(item.children, incFileExtension))
                     {
                         string incPath = GetIARRelativePath(ewpPath, item.fullName);
                         incPathList.Add(incPath);
@@ -367,7 +370,7 @@ namespace IAR_AutoPath
                 if (item.type == FileItems.ItemType.dir)//dir
                 {
                     
-                    if (!item.name.Contains(".ignore") && GetDirTree.CheckCodeFileIsExistInPath(item.children, ".c,.s"))//如果该文件夹下没有代码文件 或 需要忽略，则不添加
+                    if (!item.name.Contains(".ignore") && GetDirTree.CheckCodeFileIsExistInPath(item.children, treeFileExtension))//如果该文件夹下没有代码文件 或 需要忽略，则不添加
                     {
                         XmlNode xmlNode = GetNodeWithName(node, item.name);
                         if (xmlNode != null)//如果该group已存在，则不添加，直接检查下级目录
@@ -394,9 +397,9 @@ namespace IAR_AutoPath
                 }
                 else if (item.type == FileItems.ItemType.file)
                 {
-                    if (item.extension == ".c" /*|| item.extension == ".h" */|| item.extension == ".s")
+                    if (CheckFileExtension(item.extension, treeFileExtension))
                     {
-                        string relName= GetIARRelativePath(ewpPath, item.fullName);
+                        string relName = GetIARRelativePath(ewpPath, item.fullName);
                         if (!IsFileExistInGroupNode(node, relName))
                         {
 
@@ -413,24 +416,27 @@ namespace IAR_AutoPath
                 }
             }
         }
-        bool IsFileInFileItems(List<FileItems> fileItems, string relName)
-        {
-            foreach (FileItems item in fileItems)
-            {
-                string relativeName = GetIARRelativePath(ewpPath, item.fullName);
-                if(relativeName == relName)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
 
-        FileItems GetFileItemsChild(List<FileItems> fileItems, string name)
+        /// <summary>
+        /// 从FileItems列表中找到指定名字的FileItems
+        /// </summary>
+        /// <param name="fileItems"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        FileItems GetDirItemsFromFileItemsList(List<FileItems> fileItems, string name)
         {
             foreach (FileItems item in fileItems)
             {
-                if (item.name == name)
+                string relativeName;
+                if (name.Contains("."))//如果是文件
+                {
+                    relativeName = GetIARRelativePath(ewpPath, item.fullName);
+                }
+                else//如果是文件夹
+                {
+                    relativeName = item.name;
+                }
+                if (relativeName == name)
                 {
                     return item;
                 }
@@ -448,8 +454,8 @@ namespace IAR_AutoPath
                     if (nameNode != null)
                     {
                         string fileItemName = nameNode.InnerText;
-                        FileItems fileItem = GetFileItemsChild(fileItems, fileItemName);
-                        if (fileItem == null|| !GetDirTree.CheckCodeFileIsExistInPath(fileItem.children, ".c,.s"))//如果该文件夹不存在 或 文件夹内没有c文件，直接删除
+                        FileItems fileItem = GetDirItemsFromFileItemsList(fileItems, fileItemName);
+                        if (fileItem == null|| !GetDirTree.CheckCodeFileIsExistInPath(fileItem.children, treeFileExtension))//如果该文件夹不存在 或 文件夹内没有项目树文件，直接删除
                         {
                             waitDelList.Add(xmlItem);
                             ShowLog("Delete group：" + nameNode.InnerText);
@@ -466,7 +472,8 @@ namespace IAR_AutoPath
                     if (nameNode != null)
                     {
                         string fileItemName = nameNode.InnerText;
-                        if (!IsFileInFileItems(fileItems, fileItemName))//如果该文件不存在，直接删除
+                        FileItems fileItem = GetDirItemsFromFileItemsList(fileItems, fileItemName);
+                        if (fileItem == null|| !CheckFileExtension(fileItem.extension,treeFileExtension))//如果该文件不存在 或 该文件不是项目树文件，直接删除
                         {
                             waitDelList.Add(xmlItem);
                             ShowLog("Delete file：" + nameNode.InnerText);
@@ -496,7 +503,7 @@ namespace IAR_AutoPath
             {
                 if (item.type == FileItems.ItemType.dir)//dir
                 {
-                    if (!item.name.Contains(".ignore") && GetDirTree.CheckCodeFileIsExistInPath(item.children, ".c,.s"))//如果该文件夹下没有代码文件 或 需要忽略，则不添加
+                    if (!item.name.Contains(".ignore") && GetDirTree.CheckCodeFileIsExistInPath(item.children, treeFileExtension))//如果该文件夹下没有代码文件 或 需要忽略，则不添加
                     {
                         //生成一个新节点
                         XmlElement groupNode = xml.CreateElement("group");
@@ -662,7 +669,18 @@ namespace IAR_AutoPath
             return fullFilePath;
         }
 
-
+        public static bool CheckFileExtension(string itemExtension, string extension)
+        {
+            string[] ext = extension.Split(',');
+            for (int i = 0; i < ext.Length; i++)
+            {
+                if (string.Compare(ext[i], itemExtension) == 0)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
         #endregion
 
