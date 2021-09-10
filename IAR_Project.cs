@@ -23,6 +23,7 @@ namespace IAR_AutoPath
         public static bool isShowLog = true;
         string incFileExtension = ".h";
         string treeFileExtension = ".c,.s";
+        string[] ignoreName = new string[] { "*.ignore", "SI", "si", "*.si4project" };//更新src树忽略的文件夹
 
         public bool isAutoInclude = true;
         public bool isAutoPath = true;
@@ -362,7 +363,25 @@ namespace IAR_AutoPath
                 }
             }
         }
-
+        
+        bool IsNameIgnore(string name)
+        {
+            foreach (var item in ignoreName)
+            {
+                if (item.Contains("*"))
+                {
+                    if (name.Contains(item.Substring(1)))
+                        return true;
+                }else
+                {
+                    if(name == item)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
         void SrcTree_CheckAdd(XmlDocument xml, XmlNode node, List<FileItems> fileItems)
         {
             foreach (FileItems item in fileItems)
@@ -370,7 +389,7 @@ namespace IAR_AutoPath
                 if (item.type == FileItems.ItemType.dir)//dir
                 {
                     
-                    if (!item.name.Contains(".ignore") && GetDirTree.CheckCodeFileIsExistInPath(item.children, treeFileExtension))//如果该文件夹下没有代码文件 或 需要忽略，则不添加
+                    if (!IsNameIgnore(item.name) && GetDirTree.CheckCodeFileIsExistInPath(item.children, treeFileExtension))//如果该文件夹下没有代码文件 或 需要忽略，则不添加
                     {
                         XmlNode xmlNode = GetNodeWithName(node, item.name);
                         if (xmlNode != null)//如果该group已存在，则不添加，直接检查下级目录
@@ -503,7 +522,7 @@ namespace IAR_AutoPath
             {
                 if (item.type == FileItems.ItemType.dir)//dir
                 {
-                    if (!item.name.Contains(".ignore") && GetDirTree.CheckCodeFileIsExistInPath(item.children, treeFileExtension))//如果该文件夹下没有代码文件 或 需要忽略，则不添加
+                    if (!IsNameIgnore(item.name) && GetDirTree.CheckCodeFileIsExistInPath(item.children, treeFileExtension))//如果该文件夹下没有代码文件 或 需要忽略，则不添加
                     {
                         //生成一个新节点
                         XmlElement groupNode = xml.CreateElement("group");
