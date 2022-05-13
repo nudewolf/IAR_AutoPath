@@ -227,7 +227,8 @@ namespace IAR_AutoPath
             XmlDocument xml = new XmlDocument();
             xml.Load(ewpName);
 
-            
+            ShowLog(String.Format("【更新Include in Configuration {0}】\n", config));
+
             //获取include path 列表
             List<string> incPathList = new List<string>();
             IncPath_GetFromFileItems(incPathList, fileItems);
@@ -258,7 +259,6 @@ namespace IAR_AutoPath
             //}
 
             //*******************修改制定配置
-            ShowLog(String.Format("更新Include in Configuration {0}\n",config));
             XmlNode cfgBode = GetNodeWithName(prjNode, config);
             if(cfgBode==null)
             {
@@ -307,12 +307,16 @@ namespace IAR_AutoPath
             xml.Save(ewpName);
         }
 
+
+        /// <summary>
+        /// 更新项目文件树，文件树不区分配置
+        /// </summary>
         public void SrcTree_Update()
         {
             XmlDocument xml = new XmlDocument();
             xml.Load(ewpName);
 
-            ShowLog("\n更新项目文件：");
+            ShowLog("\n【更新项目文件】");
             XmlNode prjNode = xml.SelectSingleNode("/project");
 
             //****************直接删除重建
@@ -354,12 +358,12 @@ namespace IAR_AutoPath
             {
                 if (item.type == FileItems.ItemType.dir)//dir
                 {
-                    if (!item.name.Contains(".ignore") && GetDirTree.CheckCodeFileIsExistInPath(item.children, incFileExtension))
+                    if (!IsNameIgnore(item.name) && GetDirTree.CheckCodeFileIsExistInPath(item.children, incFileExtension))
                     {
                         string incPath = GetIARRelativePath(ewpPath, item.fullName);
                         incPathList.Add(incPath);
+                        IncPath_GetFromFileItems(incPathList, item.children);
                     }
-                    IncPath_GetFromFileItems(incPathList, item.children);
                 }
             }
         }
@@ -371,11 +375,15 @@ namespace IAR_AutoPath
                 if (item.Contains("*"))
                 {
                     if (name.Contains(item.Substring(1)))
+                    {
+                        ShowLog("Ignore: " + name);
                         return true;
+                    }
                 }else
                 {
                     if(name == item)
                     {
+                        ShowLog("Ignore: " + name);
                         return true;
                     }
                 }
