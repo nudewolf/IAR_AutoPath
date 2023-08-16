@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:IAR_AutoPath_WPF"
         mc:Ignorable="d"
-        Title="IAR Project Auxiliary V1.5" Height="550" Width="800">
+        Title="IAR Project Auxiliary V1.6" Height="550" Width="800">
     <Grid>
         <Label Content="项目文件：" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="TextBox_PrjName" Height="25" Margin="85,10,95,0" TextWrapping="Wrap" VerticalAlignment="Top" VerticalContentAlignment="Center" IsReadOnly="True" AllowDrop="True" PreviewDragOver="TextBox_PrjName_PreviewDragOver" PreviewDrop="TextBox_PrjName_PreviewDrop"/>
@@ -22,7 +22,7 @@
         <TextBox x:Name="TextBox_Version" Height="25" Margin="200,100,0,0" TextWrapping="Wrap" VerticalAlignment="Top" VerticalContentAlignment="Center" HorizontalAlignment="Left" Width="120" HorizontalContentAlignment="Center" IsReadOnly="True"/>
         <Label Content="当前版本：" HorizontalAlignment="Left" Margin="125,100,0,0" VerticalAlignment="Top"/>
         <ComboBox x:Name="ComboBox_Version" Margin="413,100,0,0" VerticalAlignment="Top" Height="25" SelectedIndex="0" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Width="120">
-            <ComboBoxItem Content="8.40.2"/>
+            <ComboBoxItem Content="8.30.1"/>
         </ComboBox>
         <Button x:Name="Button_Transfer" Content="转换" Margin="559,100,0,0" VerticalAlignment="Top" Height="25" Click="Button_Transfer_Click" HorizontalAlignment="Left" Width="75"/>
         <Label Content="选择配置：" HorizontalAlignment="Left" Margin="125,70,0,0" VerticalAlignment="Top"/>

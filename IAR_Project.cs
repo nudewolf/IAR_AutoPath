@@ -130,44 +130,231 @@ namespace IAR_AutoPath
         }
         public void ChangeVersion(string version)
         {
-            if (String.Compare(version, "8.40.2") == 0)
+            if (String.Compare(version, "8.30.1") == 0)
             {
                 Ewp_CreakBackup();
                 XmlDocument xml = new XmlDocument();
                 xml.Load(ewpName);
 
                 XmlNode prjNode = xml.SelectSingleNode("/project");
-                XmlNode  dataNode;
+                XmlNode dataNode;
 
                 XmlNodeList xmlNodeList = prjNode.ChildNodes;
                 foreach (XmlNode item in prjNode.ChildNodes)
                 {
-                    if(item.Name== "configuration")
+                    if (item.Name == "fileVersion")
                     {
-                        ShowLog("转换 Configuration " + item.SelectSingleNode("name").InnerText + "\n");
+                        item.InnerText = "3";                      
+                    }
+
+                    if (item.Name== "configuration")
+                    {
+                        ShowLog("转换 Configuration " + item.SelectSingleNode("name").InnerText+ "\n");
+
+                        dataNode = GetNodeWithName(item, "BUILDACTION");
+                        if (dataNode != null)
+                        {
+
+                            dataNode.RemoveAll();
+                            ShowLog("Remove Node: BUILDACTION");
+                        }
+
                         //setting general
                         dataNode = GetNodeWithName(item, "General").SelectSingleNode("data");
 
                         //ChangeNodeInnerText(GetNodeWithName(dataNode, "OGProductVersion").SelectSingleNode("state"), "OGProductVersion", "7.80.3.12143");
-                        ChangeNodeInnerText(GetNodeWithName(dataNode, "OGLastSavedByProductVersion").SelectSingleNode("state"), "OGLastSavedByProductVersion", "8.40.2.22864");
-                        ChangeNodeInnerText(GetNodeWithName(dataNode, "GBECoreSlave").SelectSingleNode("state"), "GBECoreSlave", "27");
-                        ChangeNodeInnerText(GetNodeWithName(dataNode, "CoreVariant").SelectSingleNode("state"), "CoreVariant", "27");
-                        ChangeNodeInnerText(GetNodeWithName(dataNode, "GFPUCoreSlave2").SelectSingleNode("state"), "GFPUCoreSlave2", "27");
+                        ChangeNodeInnerText(GetNodeWithName(dataNode, "OGLastSavedByProductVersion").SelectSingleNode("state"), "OGLastSavedByProductVersion", "8.30.1.17146");
+                        ChangeNodeInnerText(GetNodeWithName(dataNode, "GBECoreSlave").SelectSingleNode("version"), "GBECoreSlave", "26");
+                        ChangeNodeInnerText(GetNodeWithName(dataNode, "CoreVariant").SelectSingleNode("version"), "CoreVariant", "26");
+                        ChangeNodeInnerText(GetNodeWithName(dataNode, "GFPUCoreSlave2").SelectSingleNode("version"), "GFPUCoreSlave2", "26");
 
+                        ChangeNodeInnerText(dataNode.SelectSingleNode("version"), "General-version", "31");
+                        
+                        if (GetNodeWithName(dataNode, "OG_32_64DeviceCoreSlave") != null)
+                        {
+                            dataNode.RemoveChild(GetNodeWithName(dataNode, "OG_32_64DeviceCoreSlave"));
+                            ShowLog("Remove Node: OG_32_64DeviceCoreSlave");
+                        }
+
+                        if (GetNodeWithName(dataNode, "BrowseInfoPath") != null)
+                        {
+                            dataNode.RemoveChild(GetNodeWithName(dataNode, "BrowseInfoPath"));
+                            ShowLog("Remove Node: BrowseInfoPath");
+                        }
+
+                        if (GetNodeWithName(dataNode, "OGAarch64Abi") != null)
+                        {
+                            dataNode.RemoveChild(GetNodeWithName(dataNode, "OGAarch64Abi"));
+                            ShowLog("Remove Node: OGAarch64Abi");
+                        }
+
+                        if (GetNodeWithName(dataNode, "OG_32_64Device") != null)
+                        {
+                            dataNode.RemoveChild(GetNodeWithName(dataNode, "OG_32_64Device"));
+                            ShowLog("Remove Node: OG_32_64Device");
+                        }
+
+                        if (GetNodeWithName(dataNode, "BuildFilesPath") != null)
+                        {
+                            dataNode.RemoveChild(GetNodeWithName(dataNode, "BuildFilesPath"));
+                            ShowLog("Remove Node: BuildFilesPath");
+                        }
+
+                        if (GetNodeWithName(dataNode, "PointerAuthentication") != null)
+                        {
+                            dataNode.RemoveChild(GetNodeWithName(dataNode, "PointerAuthentication"));
+                            ShowLog("Remove Node: PointerAuthentication");
+                        }
+
+                        if (GetNodeWithName(dataNode, "FPU64") != null)
+                        {
+                            dataNode.RemoveChild(GetNodeWithName(dataNode, "FPU64"));
+                            ShowLog("Remove Node: FPU64\n");
+                        }
 
                         //setting ICCARM
                         dataNode = GetNodeWithName(item, "ICCARM").SelectSingleNode("data");
 
-                        ChangeNodeInnerText(dataNode.SelectSingleNode("version"), "ICCARM-version", "35");
+                        ChangeNodeInnerText(dataNode.SelectSingleNode("version"), "ICCARM-version", "34");
 
-                        dataNode.RemoveChild(GetNodeWithName(dataNode, "CCStackProtection"));
-                        ShowLog("Remove Node: CCStackProtection\n");
+                        if (GetNodeWithName(dataNode, "CCBranchTargetIdentification") != null)
+                        {
+                            dataNode.RemoveChild(GetNodeWithName(dataNode, "CCBranchTargetIdentification"));
+                            ShowLog("Remove Node: CCBranchTargetIdentification");
+                        }
+                        
+                        if (GetNodeWithName(dataNode, "CCPointerAutentiction") != null)
+                        {
+                            dataNode.RemoveChild(GetNodeWithName(dataNode, "CCPointerAutentiction"));
+                            ShowLog("Remove Node: CCPointerAutentiction");
+                        }
+                        
+                        if (GetNodeWithName(dataNode, "OICompilerExtraOption") != null)
+                        {
+                            dataNode.RemoveChild(GetNodeWithName(dataNode, "OICompilerExtraOption"));
+                            ShowLog("Remove Node: OICompilerExtraOption");
+                        }
+
+                        if (GetNodeWithName(dataNode, "CCStackProtection") != null)
+                        {
+                            dataNode.RemoveChild(GetNodeWithName(dataNode, "CCStackProtection"));
+                            ShowLog("Remove Node: CCStackProtection\n");
+                        }
+
+                        //setting AARM
+                        dataNode = GetNodeWithName(item, "AARM").SelectSingleNode("data");
+
+                        ChangeNodeInnerText(dataNode.SelectSingleNode("version"), "AARM-version", "10");
+
+                        if (GetNodeWithName(dataNode, "A_32_64Device") != null)
+                        {
+                            dataNode.RemoveChild(GetNodeWithName(dataNode, "A_32_64Device"));
+                            ShowLog("Remove Node: A_32_64Device\n");
+                        }
+                        
+                        if (GetNodeWithName(dataNode, "PreInclude") != null)
+                        {
+                            dataNode.RemoveChild(GetNodeWithName(dataNode, "PreInclude"));
+                            ShowLog("Remove Node: PreInclude\n");
+                        }
+
+                        //setting ILINK
+                        dataNode = GetNodeWithName(item, "ILINK").SelectSingleNode("data");
+
+                        ChangeNodeInnerText(dataNode.SelectSingleNode("version"), "ILINK-version", "21");
+
+                        if (GetNodeWithName(dataNode, "OILinkExtraOption") != null)
+                        {
+                            dataNode.RemoveChild(GetNodeWithName(dataNode, "OILinkExtraOption"));
+                            ShowLog("Remove Node: OILinkExtraOption");
+                        }
+
+                        if (GetNodeWithName(dataNode, "IlinkRawBinaryFile2") != null)
+                        {
+                            dataNode.RemoveChild(GetNodeWithName(dataNode, "IlinkRawBinaryFile2"));
+                            ShowLog("Remove Node: IlinkRawBinaryFile2");
+                        }
+
+                        if (GetNodeWithName(dataNode, "IlinkRawBinarySymbol2") != null)
+                        {
+                            dataNode.RemoveChild(GetNodeWithName(dataNode, "IlinkRawBinarySymbol2"));
+                            ShowLog("Remove Node: IlinkRawBinarySymbol2");
+                        }
+
+                        if (GetNodeWithName(dataNode, "IlinkRawBinarySegment2") != null)
+                        {
+                            dataNode.RemoveChild(GetNodeWithName(dataNode, "IlinkRawBinarySegment2"));
+                            ShowLog("Remove Node: IlinkRawBinarySegment2");
+                        }
+
+                        if (GetNodeWithName(dataNode, "IlinkRawBinaryAlign2") != null)
+                        {
+                            dataNode.RemoveChild(GetNodeWithName(dataNode, "IlinkRawBinaryAlign2"));
+                            ShowLog("Remove Node: IlinkRawBinaryAlign2");
+                        }
+
+                        if (GetNodeWithName(dataNode, "IlinkLogCrtRoutineSelection") != null)
+                        {
+                            dataNode.RemoveChild(GetNodeWithName(dataNode, "IlinkLogCrtRoutineSelection"));
+                            ShowLog("Remove Node: IlinkLogCrtRoutineSelection");
+                        }
+
+                        if (GetNodeWithName(dataNode, "IlinkLogFragmentInfo") != null)
+                        {
+                            dataNode.RemoveChild(GetNodeWithName(dataNode, "IlinkLogFragmentInfo"));
+                            ShowLog("Remove Node: IlinkLogFragmentInfo");
+                        }
+
+                        if (GetNodeWithName(dataNode, "IlinkLogInlining") != null)
+                        {
+                            dataNode.RemoveChild(GetNodeWithName(dataNode, "IlinkLogInlining"));
+                            ShowLog("Remove Node: IlinkLogInlining");
+                        }
+
+                        if (GetNodeWithName(dataNode, "IlinkLogMerging") != null)
+                        {
+                            dataNode.RemoveChild(GetNodeWithName(dataNode, "IlinkLogMerging"));
+                            ShowLog("Remove Node: IlinkLogMerging");
+                        }
+
+                        if (GetNodeWithName(dataNode, "IlinkDemangle") != null)
+                        {
+                            dataNode.RemoveChild(GetNodeWithName(dataNode, "IlinkDemangle"));
+                            ShowLog("Remove Node: IlinkDemangle");
+                        }
+
+                        if (GetNodeWithName(dataNode, "IlinkWrapperFileEnable") != null)
+                        {
+
+                            dataNode.RemoveChild(GetNodeWithName(dataNode, "IlinkWrapperFileEnable"));
+                            ShowLog("Remove Node: IlinkWrapperFileEnable");
+                        }
+
+                        if (GetNodeWithName(dataNode, "IlinkWrapperFile") != null)
+                        {
+                            dataNode.RemoveChild(GetNodeWithName(dataNode, "IlinkWrapperFile"));
+                            ShowLog("Remove Node: IlinkWrapperFile");
+                        }
+
+                        if (GetNodeWithName(dataNode, "IlinkProcessor") != null)
+                        {
+
+                            dataNode.RemoveChild(GetNodeWithName(dataNode, "IlinkProcessor"));
+                            ShowLog("Remove Node: IlinkProcessor");
+                        }
+
+                        if (GetNodeWithName(dataNode, "IlinkFpuProcessor") != null)
+                        {
+                            dataNode.RemoveChild(GetNodeWithName(dataNode, "IlinkFpuProcessor"));
+                            ShowLog("Remove Node: IlinkFpuProcessor\n");
+                        }
                     }
                 }
                 xml.Save(ewpName);
 
-                //删除ewt文件
-                File.Delete(ewpName.Replace(".ewp",".ewt"));
+                //删除ewt, ewd文件
+                File.Delete(ewpName.Replace(".ewp", ".ewt"));
+                File.Delete(ewpName.Replace(".ewp", ".ewd"));
             }
         }
         void Ewp_CreakBackup()

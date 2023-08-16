@@ -168,7 +168,7 @@ namespace IAR_AutoPath_WPF
                 }
                 else
                 {
-                    iarProject.ChangeVersion("8.40.2");
+                    iarProject.ChangeVersion("8.30.1");
                     UpdateEwpInfoUI(iarProject.GetEwpInfo());
                 }
             }
