@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:IAR_AutoPath_WPF"
         mc:Ignorable="d"
-        Title="IAR Project Auxiliary V1.6" Height="550" Width="800">
+        Title="IAR Project Auxiliary V1.6.1" Height="550" Width="800">
     <Grid>
         <Label Content="项目文件：" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="TextBox_PrjName" Height="25" Margin="85,10,95,0" TextWrapping="Wrap" VerticalAlignment="Top" VerticalContentAlignment="Center" IsReadOnly="True" AllowDrop="True" PreviewDragOver="TextBox_PrjName_PreviewDragOver" PreviewDrop="TextBox_PrjName_PreviewDrop"/>
